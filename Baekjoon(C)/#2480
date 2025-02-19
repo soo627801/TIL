@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int main(void) {
+    int a, b, c, p, max;
+    scanf("%d %d %d", &a, &b, &c);
+    // 같은 눈이 3개인 경우
+    if (a == b && a == c) {
+        p = 10000 + a*1000;
+    }
+    // 같은 눈이 2개인 경우
+    else if (a == b && a != c)
+        p = 1000 + a*100;
+    else if (a == c && a != b)
+        p = 1000 + a*100;
+    else if (b == c && a != b)
+        p = 1000 + b*100;
+    // 눈이 모두 다른 경우
+    else {
+        if (a >= b)
+            max = a;
+        else
+            max = b;
+        if ( max <= c)
+            max = c;
+        p = max*100;
+    }
+    printf("%d", p);
+    return 0;
+}
