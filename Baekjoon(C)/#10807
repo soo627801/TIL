@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int main(void) {
+    int N, i, v, num = 0;
+    int a[100];
+    
+    scanf("%d", &N);
+    
+    for (i=0; i<N; i++){
+        scanf("%d", &a[i]);
+    }
+    
+    scanf("%d", &v);
+    
+    for (i=0; i<N; i++) {
+        if (v == a[i])
+            num += 1;
+    }
+    printf("%d", num);
+    
+    return 0;
+}
