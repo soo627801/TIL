@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main(void) {
+    int a, b, m, n, i, j, k;
+    int bas[101];
+    scanf("%d %d", &n, &m);
+    
+    for (a=1; a<n+1; a++) {
+        bas[a] = a;
+    }
+    
+    for (b=0; b<m; b++) {
+        scanf("%d %d", &i, &j);
+        k = bas[i];
+        bas[i] = bas[j];
+        bas[j] = k;
+    }
+    
+    for (i=1; i<n+1; i++)
+        printf("%d ", bas[i]);
+    
+    return 0;
+}
