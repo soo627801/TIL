@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main(void) {
+    int n;
+    scanf("%d", &n);        // 시험 본 과목의 개수 n
+    double score[n], max=0, sum=0;
+    
+    for (int i=0; i<n; i++) {
+        scanf("%lf", &score[i]);
+        if (max < score[i])
+            max = score[i];
+    }
+    for (int j=0; j<n; j++) {
+        score[j] = score[j]/max*100;
+        sum += score[j];
+    }
+    printf("%lf\n", sum/n);
+    
+    return 0;
+}
+
