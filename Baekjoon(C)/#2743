@@ -1,0 +1,10 @@
+#include <stdio.h>
+#define MAX_LEN 100
+
+int main(void) {
+    char str[MAX_LEN+1];
+    scanf("%s", str);
+    printf("%d", strlen(str));
+    
+    return 0;
+}
