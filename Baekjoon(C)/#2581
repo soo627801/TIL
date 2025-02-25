@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int main(void) {
+    int m, n, min=10000, sum=0, prime=0;
+    scanf("%d", &m);
+    scanf("%d", &n);
+    
+    for (int i=m; i<n+1; i++) {         // m부터 n까지
+        int cnt = 0;
+        for (int j=1; j<i+1; j++) {
+            if (i%j == 0)
+                cnt += 1;
+        }
+        if (cnt == 2) {
+            sum += i;
+            prime += 1;
+            if (i < min)
+                min = i;
+        }
+    }
+    if (prime == 0)
+        printf("-1");
+    else
+        printf ("%d\n%d", sum, min);
+    
+    return 0;
+}
