@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+int main(void) {
+    int n, dot, a=2;
+    scanf("%d", &n);
+    
+    for (int i=0; i<n; i++) {
+        a = a + (a-1);
+    }
+    dot = a*a;
+    printf("%d", dot);
+}
