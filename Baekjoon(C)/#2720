@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main(void) {
+    int t, cent;
+    scanf("%d", &t);
+    
+    for (int i=0; i<t; i++) {
+        scanf("%d", &cent);
+        int qua = cent / 25;
+        cent %= 25;
+        printf("%d ", qua);
+        
+        int dim = cent / 10;
+        cent %= 10;
+        printf("%d ", dim);
+        
+        int nic = cent / 5;
+        cent %= 5;
+        printf("%d ", nic);
+        
+        int pen = cent;
+        printf("%d\n", pen);
+    }
+    
+    return 0;
+}
