@@ -1,0 +1,10 @@
+#include <stdio.h>
+
+int main(void) {
+    long n;                      // n : 가장 아랫부분의 정사각형 개수, 범위가 커서 int 대신 long을 사용해야 함. (질문 게시판 보고 해결함.)
+    scanf("%ld", &n);
+    
+    printf("%ld", n*4);
+    
+    return 0;
+}
