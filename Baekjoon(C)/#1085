@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main(void) {
+    int x, y, w, h, length, width;
+    scanf("%d %d %d %d", &x, &y, &w, &h);
+    
+    if (w-x >= x)
+        length = x;   // 세로 길이
+    else
+        length = w-x;
+    
+    if (h-y >= y)
+        width = y;    // 가로 길이
+    else
+        width = h-y;
+    
+    if (length >= width)
+        printf("%d\n", width);
+    else
+        printf("%d\n", length);
+    
+    return 0;
+}
