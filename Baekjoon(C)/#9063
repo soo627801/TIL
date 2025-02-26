@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main(void) {
+    int n, x, y, x_min=100000, x_max=-100000, y_min=100000, y_max=-100000, square;
+    
+    scanf("%d", &n);
+    
+    for (int i=0; i<n; i++) {
+        scanf("%d %d", &x, &y);
+        
+        if (x > x_max)
+            x_max = x;
+        if (x < x_min)
+            x_min = x;
+        if (y > y_max)
+            y_max = y;
+        if (y < y_min)
+            y_min = y;
+    }
+    
+    if (n == 1)
+        printf("0");
+    else {
+        square = (x_max - x_min) * (y_max - y_min);
+        printf("%d", square);
+    }
+    return 0;
+}
