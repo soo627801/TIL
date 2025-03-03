@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+// arr_len은 배열 arr의 길이입니다.
+// 파라미터로 주어지는 문자열은 const로 주어집니다. 변경하려면 문자열을 복사해서 사용하세요.
+char* solution(const char* arr[], size_t arr_len) {
+    // 전체 문자열의 길이를 계산합니다.
+    size_t total_length = 0;
+    for (size_t i = 0; i < arr_len; i++) {
+        total_length += strlen(arr[i]);
+    }
+
+    // 전체 길이에 맞게 메모리를 할당합니다.
+    // +1은 null terminator를 위한 공간입니다.
+    char* answer = (char*)malloc(total_length + 1);
+    if (answer == NULL) {
+        return NULL; // 메모리 할당 실패 시 NULL 반환
+    }
+
+    // 문자열을 이어 붙입니다.
+    answer[0] = '\0'; // 빈 문자열로 초기화
+    for (size_t i = 0; i < arr_len; i++) {
+        strcat(answer, arr[i]);
+    }
+
+    return answer; // 최종 문자열 반환
+}
