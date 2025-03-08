@@ -1,0 +1,13 @@
+char name[20];		// 이름
+int age;			// 나이
+char address[100];	// 주소
+// 자료형별로 변수를 하나씩 선언해서 사용
+
+// 한 사람의 정보만 저장할 수 있기 때문에 체계적으로 관리하기 위해 구조체라는 문법을 사용함.
+// 구조체 : struct 키워드로 정의
+
+struct Person {
+	char name[20];			// 이름
+	int age;				// 나이
+	char address[100];		// 주소
+};
