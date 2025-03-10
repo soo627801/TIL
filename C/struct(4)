@@ -1,0 +1,33 @@
+// typedef 활용하기
+// typedef 자료형 별칭
+// typedef 자료형* 별칭
+
+/*
+typedef int MYINT;		// int를 별칭 MYINT로 정의
+typedef int* PMYINT;	// int 포인터를 별칭 PMYINT로 정의
+
+MYINT num1;				// MYINT로 변수 선언
+PMYINT numPtr1;			// PMYINT로 포인터 변수 선언
+
+numPtr1 = &num1;		// 포인터에 변수의 주소 저장. 사용 방법은 일반 변수, 포인터와 같음
+*/
+
+// PMYINT는 안에 *가 이미 포함되어 있으므로 포인터 변수 선언 시 *를 붙여버리면 이중 포인터가 되기 때문에 사용
+// int* *numPtr2;		// PMYINT *와 같은 의미. 이중 포인터
+
+// 구조체 태그
+/*
+struct 태그 {
+	자료형 멤버 이름;
+};
+
+typedef struct 태그 {
+	자료형 멤버 이름;
+} 타입 이름;
+
+typedef struct Person {		// 구조체 이름 : Person
+	char name[20];
+	int age;
+	char address[100];
+} Person;					// typedef로 정의한 타입 이름도 Person
+*/
