@@ -1,0 +1,73 @@
+// 두 점 사이의 거리 구하기
+
+/*
+struct Point2D {
+    int x;
+    int y;
+};
+*/
+
+#include <stdio.h>
+
+struct Point2D {
+    int x;
+    int y;
+};
+
+int main() {
+    struct Point2D p1;          // 점 1
+    struct Point2D p2;          // 점 2
+    
+    // 점 1 위치
+    p1.x = 30;
+    p1.y = 20;
+    
+    // 점 2 위치
+    p2.x = 60;
+    p2.y = 50;
+    
+    printf("p1 : %d %d\n", p1.x, p1.y);
+    printf("p2 : %d %d\n", p2.x, p2.y);
+    
+    return 0;
+}
+
+// 피타고라스 정리 사용하기
+// sqrt 함수 사용
+
+#include <stdio.h>
+#include <math.h>       // sqrt 함수가 선언된 헤더 파일
+
+struct Point2D {
+    int x;
+    int y;
+};
+
+int main() {
+    struct Point2D p1;
+    struct Point2D p2;
+    
+    p1.x = 30;
+    p1.y = 20;
+    
+    p2.x = 60;
+    p2.y = 50;
+    
+    int a = p2.x - p1.x;        // 선 a의 길이
+    int b = p2.y - p1.y;        // 선 b의 길이
+    
+    double c = sqrt((a * a) + (b * b));
+    
+    printf("%f\n", c);
+    
+    return 0;
+}
+
+// pow(값, 지수)
+// 값^지수 구하는 함수
+// double c = sqrt(pow(a, 2) + pow(b, 2));
+
+// 절댓값 함수
+// abs(정수);
+// fabs(double형 실수);
+// fabsf(float형 실수);
