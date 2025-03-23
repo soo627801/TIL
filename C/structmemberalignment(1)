@@ -1,0 +1,54 @@
+// sizeof(struct 구조체)
+// sizeof(구조체별칭)
+// sizeof(구조체변수)
+// sizeof 구조체변수
+
+
+// 가상의 네트워크 패킷 구조체 PacketHeader를 정의해서 멤버의 크기와 구조체의 크기 구하기
+#include <stdio.h>
+
+struct PacketHeader {
+    char flags;    // 1바이트
+    int seq;       // 4바이트
+};
+
+int main()
+{
+    struct PacketHeader header;
+
+    printf("%d\n", sizeof(header.flags));           // 1: char는 1바이트
+    printf("%d\n", sizeof(header.seq));             // 4: int는 4바이트
+    printf("%d\n", sizeof(header));                 // 8: 구조체 전체 크기는 8바이트
+    printf("%d\n", sizeof(struct PacketHeader));    // 8: 구조체 이름으로 크기 구하기
+
+    return 0;
+}
+
+// PacketHeader 구조체 안에는 1바이트 크기의 char와 4바이트 크기의 int가 들어있음.
+// 전체 크기는 5바이트가 나와야 할 것 같지만 8바이트임.
+// c언어에서는 구조체 정렬 시 멤버 중 가장 큰 자료형 크기의 배수로 정렬함.
+// 여기서 가장 큰 자료형은 int - 4바이트임.
+// 4바이트로 정렬해서 flags, seq가 모두 들어가는 최소 크기는 8바이트여서 5바이트가 아닌 8바이트가 됨.
+// 여기서는 1바이트 크기의 char flags 뒤에 4바이트를 맞추기 위해 남는 공간에 3바이트가 더 들어감. = 구조체 정렬 시 남는 공간을 채우는 걸 패딩이라고 함.
+// 구조체에서 멤버의 위치(offset)를 구할 때는 offsetof 매크로 사용 (stddef.h에 정의되어 있음)
+
+// offsetof(struct 구조체, 멤버)
+// offsetof(구조체별칭, 멤버)
+
+#include <stdio.h>
+#include <stddef.h>     // offsetof 매크로가 정의된 헤더 파일
+
+struct PacketHeader {
+    char flags;     // 1바이트
+    int seq;        // 4바이트
+};
+
+int main() {
+    printf("%d\n", offsetof(struct PacketHeader, flags));
+    printf("%d\n", offsetof(Struct PacketHeader, seq));
+
+    return 0;
+}
+
+// offsetof 매크로에 구조체, 멤버 지정하면 구조체에서 해당 멤버의 상대 위치가 반환됨. (첫 멤버의 상대 위치 : 0)
+// 여기서는 구조체가 4바이트 단위로 정렬하므로 seq의 위치는 1이 아닌 4가 나옴.
