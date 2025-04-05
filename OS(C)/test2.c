@@ -1,41 +1,44 @@
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+
+int index_counter = 0;
+void *thread_Insert(void *arg);
+
+char thread1[] = "Thread A";
+char thread2[] = "Thread B";
+
+pthread_mutex_t mutx;
 
 int main(int argc, char **argv) {
-	int res;
-	res = fork();
+	pthread_t t1, t2;
+	void *thread_result;
 	
-	if (res < 0) {
-		perror("fork");
-		exit;
-	}
+	pthread_create(&t1, NULL, thread_Insert, &thread1);
+	pthread_create(&t2, NULL, thread_Insert, &thread2);
 	
-	if (res == 0) {
-		char *argv[] = {"ls", "-l", NULL};
-		printf("I am the child. My pid is %d\n", getpid()); 
-		
-		res = execv("/bin/ls", argv);
-		//res = execl("/bin/ls", "ls", "-l", (char*) 0);
-		//res = execvp(argv[0], argv);
-		
-		if (res == -1) {
-			perror("execl");
-			exit(2);
-		}
-		printf("This will never be printed\n");
-	}
+	pthread_join(t1, &thread_result);
 	
-	else {
-		int child_pid = res;
-		
-		printf("I am the father my pid is %d\n", getpid());
-		printf("Father is waiting for child to terminate %d\n", child_pid);
-		
-		waitpid(child_pid, NULL, 0);
-		
-		printf("Father has seen that the child (%d) exited\n", child_pid);
-	}
+	pthread_join(t2, &thread_result);
+	
+	printf("Terminate => %s, %s!!!\n", &thread1, &thread2);
+	printf("Final Index : %d\n", index_counter);
+	
+	pthread_mutex_destroy(&mutx);
+	return 0;
 }
+
+void *thread_Insert(void *arg) {
+	int i;
+	printf("Creating Thread : %s\n", (char*)arg);
+	pthread_mutex_lock(&mutx);		// lock, unlock을 for문 밖에 두면 됨.
+	for(i=0; i<20; i++) {
+		index_counter++;
+
+		printf("%s : INSERT item to number = %d\n", (char*)arg, index_counter);
+	}
+	pthread_mutex_unlock(&mutx);
+}
+
+// warning이 안 나오게 하려면 &s 대신에 &p를 사용하면 됨.
