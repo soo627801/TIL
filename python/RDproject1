@@ -1,0 +1,53 @@
+import numpy as np
+import sympy as sp
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D, art3d
+from matplotlib.animation import FuncAnimation
+from matplotlib import rc
+
+l1, l2, l3 = 4, 5, 3
+
+alpha1 = np.deg2rad(45)
+alpha2 = np.deg2rad(-30)
+alpha3 = np.deg2rad(60)
+
+theta1, theta2, theta3 = sp.symbols('theta1 theta2 theta3')
+
+DH = [[l1, alpha1, 0, theta1],
+      [l2, alpha2, 0, theta2],
+      [l3, alpha3, 0, theta3]]
+
+def DH_mat(a, alpha, d, theta):
+    return sp.Matrix([[sp.cos(theta), -sp.sin(theta)*sp.cos(alpha), sp.sin(theta)*sp.sin(alpha), a*sp.cos(theta)],
+                      [sp.sin(theta), sp.cos(theta)*sp.cos(alpha), -sp.cos(theta)*sp.sin(alpha), a*sp.sin(theta)],
+                      [0, sp.sin(alpha), sp.cos(alpha), d],
+                      [0, 0, 0, 1]])
+
+T0_1 = DH_mat(*DH[0])
+T1_2 = DH_mat(*DH[1])
+T2_3 = DH_mat(*DH[2])
+
+T0_2 = T0_1 * T1_2
+T0_3 = T0_2 * T2_3
+
+# test
+print(T0_1)
+print(T0_2)
+print(T0_3)
+
+def IK(x0, y0, z0, x1, y1, z1):
+    # 시작점에 대한 역기구학 계산
+    q1 = math.atan2(y0, x0)  # 베이스 회전 각도
+
+    r = math.sqrt(x0 ** 2 + y0 ** 2 + z0 ** 2)  # 3D 거리
+    q2 = math.atan2(z0, math.sqrt(x0 ** 2 + y0 ** 2))  # 어깨 관절 각도
+    q3 = math.acos((r ** 2 - 2) / 2)  # 팔꿈치 관절 각도 (링크 길이가 각각 1이라 가정)
+
+    # 끝점에 대한 역기구학 계산
+    q1_ = math.atan2(y1, x1)
+
+    r_ = math.sqrt(x1 ** 2 + y1 ** 2 + z1 ** 2)
+    q2_ = math.atan2(z1, math.sqrt(x1 ** 2 + y1 ** 2))
+    q3_ = math.acos((r_ ** 2 - 2) / 2)
+
+    return q1, q2, q3, q1_, q2_, q3_
