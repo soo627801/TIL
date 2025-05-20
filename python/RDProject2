@@ -1,0 +1,181 @@
+import math
+import numpy as np
+import sympy as sp
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+from matplotlib import rc
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+
+l1, l2, l3 = 4, 5, 3
+
+alpha1 = np.deg2rad(45)
+alpha2 = np.deg2rad(-30)
+alpha3 = np.deg2rad(60)
+
+theta1, theta2, theta3 = sp.symbols('theta1 theta2 theta3')
+
+DH = [[l1, alpha1, 0, theta1],
+      [l2, alpha2, 0, theta2],
+      [l3, alpha3, 0, theta3]]
+
+def DH_mat(a, alpha, d, theta):
+    return np.array([
+        [np.cos(theta), -np.sin(theta)*np.cos(alpha), np.sin(theta)*np.sin(alpha), a*np.cos(theta)],
+        [np.sin(theta), np.cos(theta)*np.cos(alpha), -np.cos(theta)*np.sin(alpha), a*np.sin(theta)],
+        [0, np.sin(alpha), np.cos(alpha), d],
+        [0, 0, 0, 1]])
+
+def FK(theta1, theta2, theta3):
+    DH = [[l1, alpha1, 0, theta1],
+          [l2, alpha2, 0, theta2],
+          [l3, alpha3, 0, theta3]]
+
+    T0_1 = DH_mat(*DH[0])
+    T1_2 = DH_mat(*DH[1])
+    T2_3 = DH_mat(*DH[2])
+
+    T0_2 = np.dot(T0_1, T1_2)
+    T0_3 = np.dot(T0_2, T2_3)
+
+    joint0 = np.array([0, 0, 0, 1])
+    joint1 = np.dot(T0_1, np.array([0, 0, 0, 1]))
+    joint2 = np.dot(T0_2, np.array([0, 0, 0, 1]))
+    joint3 = np.dot(T0_3, np.array([0, 0, 0, 1]))
+
+    # test
+    print(T0_1)
+    print(T0_2)
+    print(T0_3)
+
+    # 위치 좌표만 반환 (동차좌표 제거)
+    return (joint0[:3], joint1[:3], joint2[:3], joint3[:3])
+
+
+def IK(start, target):
+    x0, y0, z0 = start
+    x1, y1, z1 = target
+
+    # 시작점에 대한 역기구학
+    q1 = math.atan2(y0, x0)
+    r = math.sqrt(x0 ** 2 + y0 ** 2 + z0 ** 2)
+    q2 = math.atan2(z0, math.sqrt(x0 ** 2 + y0 ** 2)) 
+    q3 = math.acos((r ** 2 - 2) / 2) 
+
+    # 끝점에 대한 역기구학
+    q1_ = math.atan2(y1, x1)
+
+    r_ = math.sqrt(x1 ** 2 + y1 ** 2 + z1 ** 2)
+    q2_ = math.atan2(z1, math.sqrt(x1 ** 2 + y1 ** 2))
+    q3_ = math.acos((r_ ** 2 - 2) / 2)
+
+    return q1, q2, q3, q1_, q2_, q3_
+
+'''
+def inverse_kinematics(start_pos, end_pos):
+    x0, y0, z0 = start_pos
+    x1, y1, z1 = end_pos
+
+    q1 = np.arctan2(y0, x0)
+    r0 = np.sqrt(x0 ** 2 + y0 ** 2)  # xy 평면에서의 반경
+
+    target_distance0 = np.sqrt(r0 ** 2 + z0 ** 2)
+
+    cos_q3 = (target_distance0 ** 2 - l1 ** 2 - l2 ** 2) / (2 * l1 * l2)
+
+    if cos_q3 < -1 or cos_q3 > 1:
+        print(f"시작 위치 ({x0}, {y0}, {z0})에 도달할 수 없습니다.")
+        return None
+
+    q3 = np.arccos(cos_q3)
+
+    beta0 = np.arctan2(z0, r0)
+    gamma0 = np.arctan2(l2 * np.sin(q3), l1 + l2 * np.cos(q3))
+    q2 = beta0 - gamma0
+
+    q1_ = np.arctan2(y1, x1)
+
+    r1 = np.sqrt(x1 ** 2 + y1 ** 2)
+    target_distance1 = np.sqrt(r1 ** 2 + z1 ** 2)
+
+    cos_q3_ = (target_distance1 ** 2 - l1 ** 2 - l2 ** 2) / (2 * l1 * l2)
+
+    if cos_q3_ < -1 or cos_q3_ > 1:
+        print(f"끝 위치 ({x1}, {y1}, {z1})에 도달할 수 없습니다.")
+        return None
+
+    q3_ = np.arccos(cos_q3_)
+
+    beta1 = np.arctan2(z1, r1)
+    gamma1 = np.arctan2(l2 * np.sin(q3_), l1 + l2 * np.cos(q3_))
+    q2_ = beta1 - gamma1
+
+    return q1, q2, q3, q1_, q2_, q3_
+'''
+
+def draw_cube(ax, origin, size, color, alpha=0.25, label=None):
+    x, y, z = origin
+    dx, dy, dz = size
+    vertices = np.array([
+        [x, y, z],
+        [x + dx, y, z],
+        [x + dx, y + dy, z],
+        [x, y + dy, z],
+        [x, y, z + dz],
+        [x + dx, y, z + dz],
+        [x + dx, y + dy, z + dz],
+        [x, y + dy, z + dz]
+    ])
+
+    faces = [
+        [vertices[j] for j in [0, 1, 2, 3]],  # 아래 면
+        [vertices[j] for j in [4, 5, 6, 7]],  # 위 면
+        [vertices[j] for j in [0, 1, 5, 4]],  # 앞 면
+        [vertices[j] for j in [2, 3, 7, 6]],  # 뒷 면
+        [vertices[j] for j in [1, 2, 6, 5]],  # 오른쪽 면
+        [vertices[j] for j in [0, 3, 7, 4]]   # 왼쪽 면
+    ]
+
+    cube = Poly3DCollection(faces, facecolors=color, linewidths=1, edgecolors='k', alpha=.25)
+    if label:
+        cube.set_label(label)
+    ax.add_collection3d(cube)
+
+# 그림과 3D 축 생성
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# 위치 정의
+workspace_origin = (7, 4, 3)  # 로봇 원점 기준 작업대 위치
+workspace_size = (2, 2, 0.5)  # 작업대 크기
+
+# 오브젝트 위치 = 작업대 원점 + 오브젝트 상대 위치
+object_size = (0.5, 0.5, 0.5)  # 오브젝트 크기
+object_origin = (workspace_origin[0] + (workspace_size[0] - object_size[0]) / 2,
+                 workspace_origin[1] + (workspace_size[1] - object_size[1]) / 2,
+                 workspace_origin[2] + workspace_size[2])
+
+camera_origin = (7.5, 4.5, 8)  # 로봇 원점 기준 카메라 위치
+camera_size = (1, 1, 0.5)  # 카메라 크기
+
+# 큐브 그리기
+draw_cube(ax, workspace_origin, workspace_size, 'black', label='desk')
+draw_cube(ax, object_origin, object_size, 'blue', label='object')
+draw_cube(ax, camera_origin, camera_size, 'green', label='camera')
+
+# 로봇 원점 표시
+ax.scatter(0, 0, 0, color='red', s=50, marker='o', label='robot')
+
+# 축 설정
+ax.set_xlim([0, 12])
+ax.set_ylim([0, 12])
+ax.set_zlim([0, 12])
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+
+ax.legend()
+
+plt.title("simulation")
+plt.show()
