@@ -1,1 +1,144 @@
-1
+import math
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+l1, l2, l3 = 5, 6, 4
+
+alpha1, d1 = np.pi/2, l1
+alpha2, d2 = 0, 0
+alpha3, d3 = 0, 0
+
+# 초기 각도 설정하기
+theta1_init = np.deg2rad(45)
+theta2_init = np.deg2rad(-30)
+theta3_init = np.deg2rad(60)
+start_angles = (theta1_init, theta2_init, theta3_init)
+
+def DH_mat(a, alpha, d, theta):
+    return np.array([
+        [np.cos(theta), -np.sin(theta) * np.cos(alpha), np.sin(theta) * np.sin(alpha), a * np.cos(theta)],
+        [np.sin(theta), np.cos(theta) * np.cos(alpha), -np.cos(theta) * np.sin(alpha), a * np.sin(theta)],
+        [0, np.sin(alpha), np.cos(alpha), d],
+        [0, 0, 0, 1]])
+
+def FK(theta1, theta2, theta3, l1, l2, l3):
+    DH = [[0, alpha1, d1, theta1],
+          [l2, alpha2, d2, theta2],
+          [l3, alpha3, d3, theta3]]
+
+    T0_1 = DH_mat(*DH[0])
+    T1_2 = DH_mat(*DH[1])
+    T2_3 = DH_mat(*DH[2])
+
+    T0_2 = np.dot(T0_1, T1_2)
+    T0_3 = np.dot(T0_2, T2_3)
+
+    joint0 = np.array([0, 0, 0])
+    joint1_homo = np.dot(T0_1, np.array([0, 0, 0,1]))
+    joint1 = joint1_homo[:3]
+    joint2_homo = np.dot(T0_2, np.array([0, 0, 0, 1]))
+    joint2 = joint2_homo[:3]
+    joint3_homo = np.dot(T0_3, np.array([0, 0, 0,1]))
+    joint3 = joint3_homo[:3]
+
+    # test
+    print(T0_1)
+    print(T0_2)
+    print(T0_3)
+
+    # 위치 좌표만 반환 (동차좌표 제거)
+    return (joint0, joint1, joint2, joint3)
+
+def interpolate_angles(start_angles, end_angles, steps):
+    return [np.linspace(start, end, steps) for start, end in zip(start_angles, end_angles)]
+
+def draw_cube(ax, origin, size, color, alpha=0.25, label=None):
+    x, y, z = origin
+    dx, dy, dz = size
+    vertices = np.array([
+        [x, y, z],
+        [x + dx, y, z],
+        [x + dx, y + dy, z],
+        [x, y + dy, z],
+        [x, y, z + dz],
+        [x + dx, y, z + dz],
+        [x + dx, y + dy, z + dz],
+        [x, y + dy, z + dz]
+    ])
+    faces = [
+        [vertices[j] for j in [0, 1, 2, 3]],  # 아래 면
+        [vertices[j] for j in [4, 5, 6, 7]],  # 위 면
+        [vertices[j] for j in [0, 1, 5, 4]],  # 앞 면
+        [vertices[j] for j in [2, 3, 7, 6]],  # 뒷 면
+        [vertices[j] for j in [1, 2, 6, 5]],  # 오른쪽 면
+        [vertices[j] for j in [0, 3, 7, 4]]   # 왼쪽 면
+    ]
+    cube = Poly3DCollection(faces, facecolors=color, linewidths=1, edgecolors='k', alpha=.25)
+    if label:
+        cube.set_label(label)
+    ax.add_collection3d(cube)
+
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+# 위치 설정하기
+workspace_origin = (7, 4, 3)  # 로봇 원점 기준 작업대 위치
+workspace_size = (2, 2, 0.5)  # 작업대 크기
+# 오브젝트 위치
+object_size = (0.5, 0.5, 0.5)  # 오브젝트 크기
+object_origin = (workspace_origin[0] + (workspace_size[0] - object_size[0]) / 2,
+                 workspace_origin[1] + (workspace_size[1] - object_size[1]) / 2,
+                 workspace_origin[2] + workspace_size[2])
+camera_origin = (7.5, 4.5, 8)  # 로봇 원점 기준 카메라 위치
+camera_size = (1, 1, 0.5)  # 카메라 크기
+
+target_pos = (7.75, 4.75, 4)    # 오브젝트의 원점
+
+def IK(x, y, z, l1, l2, l3):
+    theta1 = np.arctan2(y, x)
+    r = np.hypot(x, y)
+    z_eff = z - l1
+    D = (r ** 2 + z_eff ** 2 - l2 ** 2 - l3 ** 2) / (2 * l2 * l3)
+    D = np.clip(D, -1, 1)
+    theta3 = np.arctan2(np.sqrt(1 - D ** 2), D)
+    theta2 = np.arctan2(z_eff, r) - np.arctan2(l3 * np.sin(theta3), l2 + l3 * np.cos(theta3))
+    return (theta1, theta2, theta3)
+
+end_angles = IK(*target_pos, l1, l2, l3)
+steps = 100
+angles = interpolate_angles(start_angles, end_angles, steps)   # 관절 각도 리스트
+
+def update(frame):
+    ax.cla()
+    # 큐브 그리기
+    draw_cube(ax, workspace_origin, workspace_size, 'black', label='desk')
+    draw_cube(ax, object_origin, object_size, 'blue', label='object')
+    draw_cube(ax, camera_origin, camera_size, 'green', label='camera')
+
+    # 로봇 원점 표시
+    ax.scatter(0, 0, 0, color='red', s=50, marker='o', label='robot')
+
+    # 축 설정
+    ax.set_xlim([0, 12])
+    ax.set_ylim([0, 12])
+    ax.set_zlim([0, 12])
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+
+    idx = min(frame, steps - 1)
+    theta1 = angles[0][idx]
+    theta2 = angles[1][idx]
+    theta3 = angles[2][idx]
+
+    joints = FK(theta1, theta2, theta3, l1, l2, l3)
+
+    x_, y_, z_ = zip(*joints)
+    ax.plot(x_, y_, z_, '-o', color = 'red', label = 'robot arm')
+
+    ax.legend()
+    plt.title("RRR robot simulation")
+
+ani = FuncAnimation(fig, update, frames = steps, interval = 50, repeat = False)
+plt.show()
