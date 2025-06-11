@@ -1,0 +1,89 @@
+from IPython import get_ipython
+from IPython.display import display
+
+#Grid World Environment
+import numpy as np
+
+class GridWorld:
+  def __init__(self, height, width, obstacles=[], start=(0, 0), goal=None):
+    self.height = height
+    self.width = width
+    self.grid = np.zeros((height, width))
+    self.obstacles = set(obstacles)
+    self.start_state = start
+    self.goal_state = goal if goal is not None else (height - 1, width - 1)
+
+    for obs in self.obstacles:
+      if 0 <= obs[0] < height and 0 <= obs[1] < width:
+        self.grid[obs] = 1
+
+      if 0 <= self.start_state[0] < height and 0 <= self.start_state[1] < width:
+        self.grid[self.start_state] = 2
+
+      if 0 <= self.goal_state[0] < height and 0 <= self.goal_state[1] < width:
+        self.grid[self.goal_state] = 3
+
+      self.current_state = self.start_state
+      self.actions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+  def reset(self):
+    self.current_state = self.start_state
+    return self.current_state
+
+  def is_valid(self, state):
+    row, col = state
+    return 0 <= row < self.height and 0 <= col < self.width and (row, col) not in self.obstacles
+
+  def step(self, action_index):
+    if not (0 <= action_index < len(self.actions)):
+      raise ValueError("Invalid action index")
+
+    action = self.actions[action_index]
+    next_state = (self.current_state[0] + action[0], self.current_state[1] + action[1])
+
+    if self.is_valid(next_state):
+      self.current_state = next_state
+
+    reward = -1
+    done = False
+
+    if self.current_state == self.goal_state:
+      reward = 10
+      done = True
+
+    elif self.current_state in self.obstacles:
+      reward = -100
+      done = True
+
+    return self.current_state, reward, done
+
+  def render(self):
+    display_grid = np.copy(self.grid)
+    display_grid[self.current_state] = 4
+
+    for r in range(self.height):
+      row_str = ""
+      for c in range(self.width):
+        if display_grid[r, c] == 0:
+          row_str += " . "
+
+        elif display_grid[r, c] == 1:
+          row_str += " # "
+
+        elif display_grid[r, c] == 2:
+          row_str += " S "
+
+        elif display_grid[r, c] == 3:
+          row_str += " G "
+
+        elif display_grid[r, c] == 4:
+          row_str += " O "
+
+      print(row_str)
+    print("-" * (self.width * 3))
+
+env = GridWorld(height=5, width=5, obstacles=[(1, 1), (1, 3), (3, 2)], start=(0, 0), goal=(4, 4))
+env.render()
+state, reward, done = env.step(0)
+env.render()
+print(f"State : {state}, Reward : {reward}, Done : {done}")
