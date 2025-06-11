@@ -1,0 +1,73 @@
+class QLearningAgent:
+  def __init__(self, env, alpha=0.1, gamma=0.9, epsilon=0.1):
+    self.env = env
+    self.gamma = gamma
+    self.epsilon = epsilon
+    self.q_table = {}
+
+    for r in range(env.height):
+      for c in range(env.width):
+        state = (r, c)
+        if state not in env.obstacles and state != env.goal_state:
+          self.q_table[state] = np.zeros(len(env.actions))
+        elif state == env.goal_state:
+          self.q_table[state] = np.zeros(len(env.actions))
+
+  def choose_action(self, state):
+    if np.random.uniform(0, 1) < self.epsilon:
+      return np.random.choice(len(self.env.actions))
+    else:
+      if state in self.q_table:
+        return np.argmax(self.q_table[state])
+      else:
+        return np.random.choice(len(self.env.actions))
+
+  def learn(self, state, action, reward, next_state):
+    if state not in self.q_table:
+      return
+
+      current_q = self.q_table[state][action]
+
+      if next_state in self.q_table:
+        max_next_q = np.max(self.q_table[next_state])
+      else:
+        max_next_q = 0
+
+      new_q = current_q + self.alpha * (reward + self.gamma * max_next_q - current_q)
+
+      self.q_table[state][action] = new_q
+
+agent = QLearningAgent(env)
+
+num_episodes = 1000
+
+for episode in range(num_episodes):
+  state = env.reset()
+  done = False
+  total_reward = 0
+
+  for i in range(100):
+    action = sarsa_agent.choose_action(state)
+    next_state, reward, done = env.step(action)
+    next_action = sarsa_agent.choose_action(next_state)
+    sarsa_agent.learn(state, action, reward, next_state, next_action)
+    state = next_state
+    action = next_action
+    total_reward += reward
+    if done:
+      break
+
+  if (episode + 1) % 100 == 0:
+    print(f"Episode {episode + 1} : Total Reward = {total_reward}")
+
+state = env.reset()
+env.render()
+done = False
+while not done:
+  if state in agent.q_table:
+    action = np.argmax(agent.q_table[state])
+  else:
+    action = np.random.choice(len(env.actions))
+  state, reward, done = env.step(action)
+  env.render()
+  print(f"State : {state}, Reward : {reward}, Done : {done}")
