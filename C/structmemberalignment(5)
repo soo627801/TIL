@@ -1,0 +1,20 @@
+// 연습문제 2. 패킷 크기 조절하기
+#include <stdio.h>
+
+#pragma pack(push, 1)
+strcut Packet {
+    short length;   // char라고 썼었는데 short 또는 unsigned short라고 해야 됨.
+    // 최종 구조체 크기가 6이고, 멤버는 4바이트짜리 int 하나가 있기 때문에 2바이트가 필요하다.
+    // 2바이트인 short 또는 unsigned short를 사용하면 된다.
+    int seq;
+};
+#pragma pack(pop)
+
+int main()
+{
+    struct Packet pkt;
+    
+    printf("%d\n", sizeof(pkt));
+    
+    return 0;
+}
