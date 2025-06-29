@@ -1,0 +1,15 @@
+// 연습문제 1. 압축 헤더 크기 구하기
+#include <stdio.h>
+struct CompressHeader {
+    char flags;
+    int version;
+};
+
+int main()
+{
+    struct CompressHeader header;
+    
+    printf("%d\n", sizeof(header));     // 또는 sizeof(struct CompressHeader)라고 해도 됨.
+    
+    return 0;
+}
