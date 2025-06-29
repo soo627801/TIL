@@ -1,0 +1,12 @@
+// 퀴즈
+// 다음과 같이 구조체와 구조체 변수가 있을 때 구조체의 크기를 구하는 방법으로 올바른 것을 모두 고르세요
+struct PacketHeader {
+    char flags;
+    int seq;
+};
+
+struct PacketHeader header;
+
+// b. sizeof(struct PacketHeader);
+// d. sizeof(header);
+// e. sizeof header;
