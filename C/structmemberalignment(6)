@@ -1,0 +1,24 @@
+// 심사문제 1. 암호화 헤더 크기 구하기
+// 다음 소스 코드를 완성하여 12가 출력되게 만드세요. 구조체 멤버의 이름은 마음대로 지어도 됩니다.
+
+#include <stdio.h>
+
+struct EncryptionHeader {
+    char flags;
+    //________
+    //________
+};
+ 
+int main()
+{
+    struct EncryptionHeader header;
+ 
+    printf("%d\n", sizeof(header));
+
+    return 0;
+}
+
+// 정답
+// char 11개 더 선언
+// short 2개, int 1개 더 선언
+// short 5개 더 선언
