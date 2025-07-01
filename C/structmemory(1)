@@ -1,0 +1,55 @@
+// 구조체 멤버를 모두 0으로 만드려면
+// 1. 각 멤버에 접근하여 0 저장하기 -> 번거로움
+구조체변수.멤버1 = 0;
+구조체변수.멤버2 = 0;
+구조체변수.멤버3 = 0;
+구조체변수.멤버4 = 0;
+
+// 2. 중괄호 사용 -> 변수에만 사용 가능, malloc 함수로 할당한 메모리에는 사용 불가능
+struct 구조체이름 변수이름 = { 0, };
+
+// 3. 일일이 멤버에 값을 설정하거나 중괄호를 사용하지 않고, 구조체 변수나 메모리의 내용을 한 번에 값을 설정하려면 memset 함수 사용
+// memset(구조체포인터, 설정할값, sizeof(struct 구조체));
+#include <stdio.h>
+#include <string.h>     // memset 함수가 선언된 헤더 파일
+
+struct Point2D {
+    int x;
+    int y;
+};
+
+int main() {
+    struct Point2D p1;
+    
+    memset(&p1, 0, sizeof(struct Point2D));     // p1을 구조체 크기만큼 0으로 설정
+    
+    printf("%d %d\n", p1.x, p1.y);              // 0 0: memset을 사용하여 0으로 설정했으므로 x, y 모두 0
+    
+    return 0;
+}
+
+// 출력 : 0 0
+
+
+#include <stdio.h>
+#include <stdlib.h>     // malloc, free 함수가 선언된 헤더 파일
+#include <string.h>
+
+struct Point2D {
+    int x;
+    int y;
+};
+
+int main() {
+    struct Point2D *p1 = malloc(sizeof(struct Point2D));    // 구조체 크기만큼 메모리 할당
+    
+    memset(p1, 0, sizeof(struct Point2D));                  // p1을 구조체 크기만큼 0으로 설정
+    
+    printf("%d %d\n", p1->x, p1->y);        // 0 0 : memset을 사용하여 0으로 설정했으므로 x, y 모두 0
+    
+    free(p1);                               // 동적 메모리 해제
+    
+    return 0;
+}
+
+// 출력 : 0 0 
