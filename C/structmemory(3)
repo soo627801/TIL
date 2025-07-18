@@ -1,0 +1,10 @@
+// 퀴즈 1.
+// struct Point2D p;의 내용을 모두 0으로 초기화하는 방법으로 올바른 것을 고르세요.
+// b. memset(&p, 0, sizeof(struct Point2D));
+
+// 퀴즈 2.
+// struct Point2D *p1;을 struct Point2D p2;로 복사하는 방법으로 올바른 것을 고르세요.
+// a. memcpy(&p2, p1, sizeof(struct Point2D));
+// 틀렷음.. &가 p2에만 붙어야 됨!
+
+
