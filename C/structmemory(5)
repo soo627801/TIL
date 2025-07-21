@@ -1,0 +1,26 @@
+// 연습 문제 2. 2차원 좌표 복제하기
+// 다음 소스 코드를 완성하여 10 20이 출력되게 만드세요
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Point2D {
+	int x;
+	int y;
+};
+
+int main(void) {
+	struct Point2D p1;
+	struct Point2D *p2 = malloc(sizeof(struct Point2D));
+
+	p1.x = 10;
+	p1.y = 20;
+
+//
+	memcpy(p2, &p1, sizeof(struct Point2D));
+//
+	free(p2);
+
+	return 0;
+}
