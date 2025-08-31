@@ -1,0 +1,30 @@
+// 다음 소스 코드를 완성해 아무 정보도 출력되지 않게 만드세요 (함수 안의 인수만 채우기)
+// 정답에는 밑줄 친 부분에 들어갈 코드만 작성해야 함
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+
+struct Person {
+  char name[20];
+  int age;
+  char address[100];
+};
+
+int main() {
+  struct Person p1;
+
+  strcpy(p1.name, "홍길동");
+  p1.age = 30;
+  strcpy(p1.address, "서울시 용산구 한남동");
+
+  // 답 - p1의 내용을 0으로 설정해야 함. 
+  // 여기서 p1은 구조체 변수여서 &를 사용해 메모리 주소를 구해서 넣어주고, 설정할 값 0과 구조체 크기를 구해서 넣어주면 됨
+  memset(&p1, 0, sizeof(struct Person));
+
+  printf("이름 : %s\n", p1.name);
+  printf("나이 : %d\n", p1.age);
+  printf("주소 : %s\n", p1.address);
+
+  return 0;
+}
