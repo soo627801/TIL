@@ -1,0 +1,23 @@
+// 2차원 좌표를 10개 만들어야 될 때에는 간단하게 구조체 변수 p1부터 p10까지 선언하는 방법이 있음
+struct Point2D {
+  int x;
+  int y;
+};
+
+// 구조체 변수 10개 선언
+struct Point2D p1;
+struct Point2D p2;
+struct Point2D p3;
+struct Point2D p4;
+struct Point2D p5;
+struct Point2D p6;
+struct Point2D p7;
+struct Point2D p8;
+struct Point2D p9;
+struct Point2D p10;
+
+
+// 좌표의 개수가 늘어날수록 힘들어짐 -> 일반 자료형처럼 구조체도 배열로 만들면 편리함
+struct Point2D p[3000];    // 요소가 3,000개인 구조체 배열 선언
+
+
