@@ -1,0 +1,26 @@
+// quiz 1. 요소의 개수가 10개인 Point2D 구조체 배열 p를 만드려고 할 때, 올바른 코드 ?
+// -> struct Point2D p[10];
+
+
+// quiz 2. 다음 중 구조체 포인터 배열을 선언하는 방법으로 올바른 것 ?
+// -> struct Point2D *p[10];
+
+
+// quiz 3. 다음과 같이 구조체와 구조체 배열이 있을 때 멤버에 접근하는 방법으로 올바른 것 ?
+struct Point2D {
+  int x;
+  int y;
+};
+
+struct Point2D p[3];
+// -> p[1].x
+
+
+// quiz 4. 다음과 같이 구조체와 구조체 포인터 배열이 있을 때 멤버에 접근하는 방법으로 올바른 것 ?
+struct Point2D {
+  int x;
+  int y;
+};
+
+struct Point2D *p[3];
+// -> p[2]->y
