@@ -1,0 +1,36 @@
+// 연습문제 : 2차원 좌표 출력
+
+#include <stdio.h>
+
+struct Point2D {
+   int x;
+   int y;
+};
+
+int main() {
+   struct Point2D p[3];
+
+   p[0].x = 10;
+   p[0].y = 20;
+   p[1].x = 30;
+   p[1].y = 40;
+   p[2].x = 50;
+   p[2].y = 60;
+
+   for (int i = 0; i < sizeof(p) / sizeof(struct Point2D); i++) {
+      printf(“%d %d\n”, p[i].x, p[I].y);
+   }
+
+   return 0;
+}
+
+// 실행 결과
+10 20
+30 40 
+50 60
+
+// 구조체 배열의 인덱스 2까지 접근하고 있으므로 구조체 배열의 요소는 최소 3개
+// -> struct Point2D p[3];과 같이 선언
+// 구조체 배열의 모든 요소를 출력하려면 0부터 마지막 요소까지 출력해야 함.
+// 이때 구조체 배열의 요소 개수를 구하려면 sizeof(p) / sizeof(struct Point2D) 와 같이 구조체 배열의 전체 크기에서 구조체의 크기로 나눠주면 됨.
+// for 또는 while로 0부터 마지막 요소까지 반복하면서 p[i].x, p[i].y와 같이 구조체 배열에 인덱스로 접근해 멤버를 출력하면 됨.
