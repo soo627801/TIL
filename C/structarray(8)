@@ -1,0 +1,51 @@
+// 표준 입력으로 5명의 인적 정보가 입력됩니다(홀수 번째는 이름, 짝수 번째는 나이).
+// 다음 소스 코드를 완성하여 입력된 사람 중에서 나이가 가장 많은 사람의 이름이 출력되게 만드세요.
+// 정답에는 밑줄 친 부분에 들어갈 코드만 작성해야 합니다.
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Person {
+    char name[30];
+    int age;
+};
+
+int main()
+{
+    struct Person *p[5];
+
+    // 빈칸
+
+    for (int i = 0; i < sizeof(p) / sizeof(struct Person *); i++)
+    {
+        free(p[i]);                                           // 메모리 해제
+    }
+
+    return 0;
+}
+
+// 정답
+
+for (int i = 0; i < 5; i++)
+    p[i] = (struct Person *)malloc(sizeof(struct Person));    // malloc -> 메모리 확보
+
+for (int i = 0; i < 5; i++)
+    scanf("%s %d", p[i]->name, &p[i]->age);                   // scanf로 입력
+
+int maxAge = p[0]->age;
+int maxIndex = 0;
+
+for (int i = 1; i < 5; i++)                                   // for문으로 최대값 찾기
+    if (p[i]->age > maxAge) {
+        maxAge = p[i]->age;
+        maxIndex = i;
+    }
+
+printf("%s\n", p[maxIndex]->name);
+
+// 내가 작성한 코드의 문제점
+    scanf("%s %d %s %d %s %d %s %d %s %d",
+    &p[0].x, &p[0].y, &p[1].x, &p[1].y, &p[2].x, &p[2].y, &p[3].x, &p[3].y, &p[4].x, &p[4].y,);
+// sturct Person은 x, y가 아니라 name, age로 정의되어 있고,
+// p[i]는 포인터이기 때문에 p[i] -> name, p[i] -> age 처럼 접근해야 함!
