@@ -1,1 +1,60 @@
-1
+9/27 - 9/28
+
+- Webots 설치
+
+cd ~/Downloads
+sudo dpkg -i webots_2025a_amd64.deb
+sudo apt-get install -f
+
+- 실행하기
+webots
+
+- file > open sample world > robots > robotis > turtlebot3_burger.wbt 불러오기
+
+- stable-baselines3, pytorch 설치하기
+rm -rf ~/.cache/pip
+python3 -m pip install --upgrade pip
+<cpu 전용 pytorch 설치>
+pip install torch==2.3.1+cpu torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install stable-baselines3[extra]
+pip install gymnasium
+pip install stable-baselines3[extra] numpy matplotlib opencv-python
+sudo apt-get clean
+rm -rf ~/.cache/pip
+
+- ROS2 + Webots 연동
+sudo apt update --fix-missing
+sudo apt install ros-humble-webots-ros2
+<계속 오류 발생 시, ROS2 리포지토리 재설정하기>
+sudo rm /etc/apt/sources.list.d/ros2-latest.list
+sudo apt update
+sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+  -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" \
+  | sudo tee /etc/apt/sources.list.d/ros2-latest.list
+sudo apt update
+sudo apt install ros-humble-webots-ros2
+
+# 최종 해결법
+1) 중복된 ROS2 repo 정리하기
+sudo rm /etc/apt/sources.list.d/ros2-latest.list
+sudo rm /etc/apt/sources.list.d/ros2.list
+
+2) APT 캐시 초기화하기
+sudo rm -rf /var/lib/apt/lists/*
+sudo apt clean
+
+3) ROS2 repo 다시 추가하기
+sudo apt update
+sudo apt install curl gnupg2 -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+  -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" \
+| sudo tee /etc/apt/sources.list.d/ros2.list
+
+4) 업데이트 및 설치
+sudo apt update
+sudo apt install ros-humble-webots-ros2
