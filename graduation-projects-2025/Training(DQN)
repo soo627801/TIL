@@ -1,0 +1,27 @@
+- DQN 학습 및 보상 시각화 자동화
+
+⚙️ 학습 실행
+source /opt/ros/humble/setup.bash
+source ~/ros2_ws/install/setup.bash
+python3 ~/ros2_ws/src/tb3_rl/tb3_rl/train_dqn.py
+
+✅ 300 Episode 학습 완료 후 자동 저장
+trained_dqn.pth
+episode_reward.csv
+reward_plot.png
+
+🧩 주행 테스트
+python3 ~/ros2_ws/src/tb3_rl/tb3_rl/run_dqn.py
+
+✅ 학습된 모델로 Webots 시뮬레이터에서 자율주행 동작 확인
+✅ “🏁 Episode finished. Resetting environment.” 로그 반복 → 정상
+
+🧮 Result Files
+파일명	                    설명
+trained_dqn.pth	          학습 완료된 DQN 정책 네트워크
+episode_reward.csv	      에피소드별 총 보상 로그
+reward_plot.png	          학습 곡선 그래프 (논문용)
+training_arena.wbt	      Webots 학습 환경
+tb3_env.py	              ROS2-Gym 환경 정의
+train_dqn.py	            DQN 학습 코드
+run_dqn.py	              학습된 모델 실행
