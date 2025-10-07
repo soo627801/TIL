@@ -1,0 +1,25 @@
+- DQN 학습 환경 구축 및 ROS2-Gym 연동
+
+📂 프로젝트 구조
+~/ros2_ws/src/tb3_rl/
+├── package.xml
+├── setup.py
+├── worlds/training_arena.wbt
+├── controllers/episode_supervisor/episode_supervisor.py
+└── tb3_rl/
+    ├── tb3_env.py
+    ├── train_dqn.py
+    ├── run_dqn.py
+
+⚙️ 의존성 설치
+pip install torch==2.2.2+cpu torchvision==0.17.2+cpu torchaudio==2.2.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
+pip install "numpy<2" --force-reinstall
+pip install gym stable-baselines3 matplotlib
+
+✅ 환경 빌드 및 확인
+cd ~/ros2_ws
+colcon build
+source ~/ros2_ws/install/setup.bash
+
+🧭 Webots 환경 실행
+webots ~/ros2_ws/src/tb3_rl/worlds/training_arena.wbt
